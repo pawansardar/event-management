@@ -25,9 +25,9 @@ public class JwtUtil {
 	private long EXPIRATION;
 	
 	// Generate token
-	public String generateToken(UserDetails userDetails) {
+	public String generateToken(String userId, UserDetails userDetails) {
 		return Jwts.builder()
-				.subject(userDetails.getUsername())
+				.subject(userId)
 				.claim("roles", userDetails.getAuthorities().stream()
 						.map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
 				.issuedAt(new Date())
@@ -41,12 +41,12 @@ public class JwtUtil {
 		return Jwts.parser().setSigningKey(SECRET).build().parseClaimsJws(token).getBody();
 	}
 	
-	// Extract username (email)
+	// Extract username (subject)
 	public String extractUsername(String token) {
 		return extractClaims(token).getSubject();
 	}
 	
-	// Extract role(s)
+	// Extract roles
 	public List<String> extractRoles(String token) {
 		return extractClaims(token).get("roles", List.class);
 	}

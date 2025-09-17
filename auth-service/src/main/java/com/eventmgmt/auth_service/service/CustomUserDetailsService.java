@@ -14,7 +14,7 @@ import com.eventmgmt.auth_service.model.User;
 import com.eventmgmt.auth_service.repository.UserRepository;
 
 @Service
-public class CustomUserDetailsService implements UserDetailsService {
+public class CustomUserDetailsService implements ExtendedUserDetailsService {
 	private UserRepository userRepo;
 	
 	public CustomUserDetailsService(UserRepository userRepo) {
@@ -25,7 +25,16 @@ public class CustomUserDetailsService implements UserDetailsService {
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		User user = userRepo.findByEmail(email)
 				.orElseThrow(() -> new UsernameNotFoundException("User not found!"));
-		
+		return buildUserDetails(user);
+	}
+	
+	public UserDetails loadUserById(Long userId) throws UsernameNotFoundException {
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found!"));
+        return buildUserDetails(user);
+    }
+	
+	private UserDetails buildUserDetails(User user) {
 		Set<SimpleGrantedAuthority> authorities = new HashSet<>();
 		for (Role role : user.getRoles()) {
 			String roleName = role.getName();

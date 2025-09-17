@@ -32,13 +32,13 @@ public class AuthController {
 	@PostMapping("/login")
 	public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
 		// Authenticate using username and password
-		authService.authenticate(request.getEmail(), request.getPassword());
+		User user = authService.authenticate(request.getEmail(), request.getPassword());
 		
 		// Load user details
-		UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
+		UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
 		
-		// Generate JWT token
-		String token = jwtUtil.generateToken(userDetails);
+		// Generate JWT token with user-id as subject
+		String token = jwtUtil.generateToken(Long.toString(user.getId()), userDetails);
 		
 		return ResponseEntity.ok(new AuthResponse(token));
 	}
