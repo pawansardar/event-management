@@ -41,10 +41,10 @@ public class CustomUserDetailsService implements ExtendedUserDetailsService {
 			authorities.add(new SimpleGrantedAuthority(roleName));
 		}
 		
-		return new org.springframework.security.core.userdetails.User(
+		return new UserPrincipal(
+				user.getId(),
 				user.getEmail(),
 				user.getPassword(),
-				true, true, true, true,
 				authorities
 				);
 	}

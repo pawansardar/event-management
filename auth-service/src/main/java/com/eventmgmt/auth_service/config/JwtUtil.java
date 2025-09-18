@@ -38,7 +38,7 @@ public class JwtUtil {
 	
 	// Extract Claims
 	public Claims extractClaims(String token) {
-		return Jwts.parser().setSigningKey(SECRET).build().parseClaimsJws(token).getBody();
+		return Jwts.parser().setSigningKey(getSignInKey()).build().parseClaimsJws(token).getBody();
 	}
 	
 	// Extract username (subject)
@@ -52,8 +52,8 @@ public class JwtUtil {
 	}
 	
 	// Check if token is valid
-	public boolean isTokenValid(String token, UserDetails userDetails) {
-		return extractUsername(token).equals(userDetails.getUsername()) &&
+	public boolean isTokenValid(String token, String expectedUserId) {
+		return extractUsername(token).equals(String.valueOf(expectedUserId)) &&
 				extractClaims(token).getExpiration().after(new Date());
 	}
 	
