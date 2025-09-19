@@ -1,4 +1,4 @@
-package com.eventmgmt.auth_service.config;
+package com.eventmgmt.auth_service.security;
 
 import java.security.Key;
 import java.util.Date;

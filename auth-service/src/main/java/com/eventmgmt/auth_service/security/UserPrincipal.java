@@ -1,4 +1,4 @@
-package com.eventmgmt.auth_service.service;
+package com.eventmgmt.auth_service.security;
 
 import java.util.Collection;
 

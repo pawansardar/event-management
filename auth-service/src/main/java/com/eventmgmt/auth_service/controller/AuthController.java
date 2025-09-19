@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.eventmgmt.auth_service.config.JwtUtil;
 import com.eventmgmt.auth_service.dto.request.AuthRequest;
 import com.eventmgmt.auth_service.dto.request.RegisterUserRequest;
 import com.eventmgmt.auth_service.dto.response.AuthResponse;
 import com.eventmgmt.auth_service.dto.response.RegisterUserResponse;
 import com.eventmgmt.auth_service.model.User;
+import com.eventmgmt.auth_service.security.JwtUtil;
 import com.eventmgmt.auth_service.service.AuthService;
 
 @RestController

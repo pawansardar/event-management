@@ -18,7 +18,7 @@ import com.eventmgmt.auth_service.dto.response.RoleResponse;
 import com.eventmgmt.auth_service.dto.response.UserResponse;
 import com.eventmgmt.auth_service.model.Role;
 import com.eventmgmt.auth_service.model.User;
-import com.eventmgmt.auth_service.service.UserPrincipal;
+import com.eventmgmt.auth_service.security.UserPrincipal;
 import com.eventmgmt.auth_service.service.UserService;
 
 @RestController
