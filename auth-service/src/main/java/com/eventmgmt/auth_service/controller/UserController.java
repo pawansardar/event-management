@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -60,5 +61,12 @@ public class UserController {
 		Long userId = principal.getId();
 		userService.deleteUser(userId);
 		return ResponseEntity.noContent().build();
+	}
+	
+	@GetMapping("/{userId}")
+	public ResponseEntity<RegisterUserResponse> getUserById(@PathVariable Long userId) {
+		User user = userService.getUser(userId);
+		RegisterUserResponse response = new RegisterUserResponse(user.getId(), user.getName(), user.getEmail(), user.getAddress());
+		return ResponseEntity.ok(response);
 	}
 }

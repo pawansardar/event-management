@@ -3,6 +3,7 @@ package com.eventmgmt.auth_service.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -13,6 +14,7 @@ import com.eventmgmt.auth_service.security.JwtAuthFilter;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 	private final JwtAuthFilter jwtAuthFilter;
 	private final AuthenticationProvider authProvider;
@@ -28,10 +30,8 @@ public class SecurityConfig {
 		.csrf(csrf -> csrf.disable())
 		.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 		.authorizeHttpRequests(auth -> auth
-				.requestMatchers(
-						"/",
-						"/api/auth/**"
-						).permitAll()
+				.requestMatchers("/", "/api/auth/**").permitAll()
+				.requestMatchers("/api/roles/**").hasRole("ADMIN")
 				.anyRequest().authenticated()
 				)
 		.authenticationProvider(authProvider)
