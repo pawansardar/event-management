@@ -2,11 +2,14 @@ package com.eventmgmt.auth_service.service;
 
 import java.util.Optional;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.eventmgmt.auth_service.exception.custom.ResourceConflictException;
+import com.eventmgmt.auth_service.exception.custom.ResourceNotFoundException;
 import com.eventmgmt.auth_service.model.Role;
 import com.eventmgmt.auth_service.model.User;
 import com.eventmgmt.auth_service.model.enums.RoleType;
@@ -33,26 +36,31 @@ public class AuthService {
 				);
 		
 		return userRepo.findByEmail(email)
-				.orElseThrow();
+				.orElseThrow(() -> new ResourceNotFoundException("Email not found"));
 	}
 	
 	public User signup(String name, String email, String password, String address) {
 		if (userRepo.findByEmail(email).isPresent()) {
-			throw new IllegalArgumentException("email already exists!");
+			throw new ResourceConflictException("Email already exists");
 		}
 		
-		Optional<Role> defaultRole = roleRepo.findByName(RoleType.ROLE_ATTENDEE.toString());
-		if (defaultRole.isEmpty()) {
-			throw new RuntimeException("Default role not found!");
+		try {
+			Optional<Role> defaultRole = roleRepo.findByName(RoleType.ROLE_ATTENDEE.toString());
+			if (defaultRole.isEmpty()) {
+				throw new ResourceNotFoundException("Role not found");
+			}
+			
+			User user = new User();
+			user.setName(name);
+			user.setEmail(email);
+			user.setPassword(passwordEncoder.encode(password));
+			user.setAddress(address);
+			user.getRoles().add(defaultRole.get());
+			
+			return userRepo.save(user);
 		}
-		
-		User user = new User();
-		user.setName(name);
-		user.setEmail(email);
-		user.setPassword(passwordEncoder.encode(password));
-		user.setAddress(address);
-		user.getRoles().add(defaultRole.get());
-		
-		return userRepo.save(user);
+		catch (DataIntegrityViolationException ex) {
+			throw new ResourceConflictException("Email already exists");
+		}
 	}
 }

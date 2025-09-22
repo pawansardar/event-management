@@ -3,6 +3,7 @@ package com.eventmgmt.auth_service.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,6 +18,7 @@ public class Role {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int id;
 	
+	@Column(unique=true, nullable=false)
 	private String name;
 	
 	@ManyToMany(mappedBy = "roles")

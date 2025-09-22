@@ -1,8 +1,16 @@
 package com.eventmgmt.auth_service.dto.request;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+
 public class UpdateUserRequest {
+	
+	@NotBlank(message = "Name is mandatory")
 	private String name;
+	
+	@Email(message = "Email should be valid")
 	private String email;
+	
 	private String address;
 	
 	public UpdateUserRequest() {}

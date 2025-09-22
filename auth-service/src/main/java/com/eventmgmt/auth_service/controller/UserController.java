@@ -22,6 +22,8 @@ import com.eventmgmt.auth_service.model.User;
 import com.eventmgmt.auth_service.security.UserPrincipal;
 import com.eventmgmt.auth_service.service.UserService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -48,7 +50,7 @@ public class UserController {
 	}
 	
 	@PutMapping("/me")
-	public ResponseEntity<RegisterUserResponse> updateAuthenticatedUser(@AuthenticationPrincipal UserPrincipal principal, @RequestBody UpdateUserRequest request) {
+	public ResponseEntity<RegisterUserResponse> updateAuthenticatedUser(@AuthenticationPrincipal UserPrincipal principal, @RequestBody @Valid UpdateUserRequest request) {
 		Long userId = principal.getId();
 		
 		User updatedUser = userService.updateUser(userId, request);

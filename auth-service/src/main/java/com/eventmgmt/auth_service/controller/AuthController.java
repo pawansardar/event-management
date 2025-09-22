@@ -16,6 +16,8 @@ import com.eventmgmt.auth_service.model.User;
 import com.eventmgmt.auth_service.security.JwtUtil;
 import com.eventmgmt.auth_service.service.AuthService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -30,7 +32,7 @@ public class AuthController {
 	}
 	
 	@PostMapping("/login")
-	public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
+	public ResponseEntity<AuthResponse> login(@RequestBody @Valid AuthRequest request) {
 		// Authenticate using username and password
 		User user = authService.authenticate(request.getEmail(), request.getPassword());
 		
@@ -44,7 +46,7 @@ public class AuthController {
 	}
 	
 	@PostMapping("/signup")
-	public ResponseEntity<RegisterUserResponse> register(@RequestBody RegisterUserRequest request) {
+	public ResponseEntity<RegisterUserResponse> register(@RequestBody @Valid RegisterUserRequest request) {
 		User registeredUser = authService.signup(request.getName(), request.getEmail(), request.getPassword(), request.getAddress());
 		RegisterUserResponse response = new RegisterUserResponse(registeredUser.getId(), registeredUser.getName(), registeredUser.getEmail(), registeredUser.getAddress());
 		return ResponseEntity.ok(response);
