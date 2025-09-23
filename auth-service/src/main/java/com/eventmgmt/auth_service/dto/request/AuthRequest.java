@@ -1,14 +1,15 @@
 package com.eventmgmt.auth_service.dto.request;
 
+import com.eventmgmt.auth_service.validation.annotation.StrongPassword;
+
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Size;
 
 public class AuthRequest {
 	
 	@Email(message = "Email should be valid")
 	private String email;
 	
-	@Size(min = 8, max = 16, message = "Password must be between 8 to 16 characters")
+	@StrongPassword
 	private String password;
 	
 	public String getEmail() {
