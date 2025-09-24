@@ -1,9 +1,7 @@
 package com.eventmgmt.auth_service.controller;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -16,20 +14,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.eventmgmt.auth_service.dto.response.RoleResponse;
 import com.eventmgmt.auth_service.dto.response.UserPageResponse;
 import com.eventmgmt.auth_service.dto.response.UserResponse;
-import com.eventmgmt.auth_service.model.Role;
+import com.eventmgmt.auth_service.mapper.UserMapper;
 import com.eventmgmt.auth_service.model.User;
 import com.eventmgmt.auth_service.service.UserService;
 
 @RestController
 @RequestMapping("/api/users")
 public class AdminUserController {
-	private UserService userService;
+	private final UserService userService;
+	private final UserMapper userMapper;
 	
-	public AdminUserController(UserService userService) {
+	public AdminUserController(UserService userService, UserMapper userMapper) {
 		this.userService = userService;
+		this.userMapper = userMapper;
 	}
 	
 	@PreAuthorize("hasRole('ADMIN')")
@@ -40,12 +39,7 @@ public class AdminUserController {
 		List<User> users = userPage.getContent();
 		List<UserResponse> userResponseList = new ArrayList<>();
 		for (User user : users) {
-			Set<RoleResponse> roleResponseList = new HashSet<>();
-			for (Role role : user.getRoles()) {
-				RoleResponse roleResponse = new RoleResponse(role.getId(), role.getName());
-				roleResponseList.add(roleResponse);
-			}
-			UserResponse userResponse = new UserResponse(user.getId(), user.getName(), user.getEmail(), user.getAddress(), roleResponseList);
+			UserResponse userResponse = userMapper.toResponse(user);
 			userResponseList.add(userResponse);
 		}
 		
@@ -64,29 +58,13 @@ public class AdminUserController {
 	@PostMapping("/{userId}/role/{roleId}")
 	public ResponseEntity<UserResponse> assignRole(@PathVariable Long userId, @PathVariable int roleId) {
 		User user = userService.assignRole(userId, roleId);
-		
-		Set<RoleResponse> roleResponseSet = new HashSet<>();
-		for (Role role : user.getRoles()) {
-			RoleResponse roleResponse = new RoleResponse(role.getId(), role.getName());
-			roleResponseSet.add(roleResponse);
-		}
-		
-		UserResponse response = new UserResponse(user.getId(), user.getName(), user.getEmail(), user.getAddress(), roleResponseSet);
-		return ResponseEntity.ok(response);
+		return ResponseEntity.ok(userMapper.toResponse(user));
 	}
 	
 	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/{userId}/role/{roleId}")
 	public ResponseEntity<UserResponse> removeRole(@PathVariable Long userId, @PathVariable int roleId) {
 		User user = userService.removeRole(userId, roleId);
-		
-		Set<RoleResponse> roleResponseSet = new HashSet<>();
-		for (Role role : user.getRoles()) {
-			RoleResponse roleResponse = new RoleResponse(role.getId(), role.getName());
-			roleResponseSet.add(roleResponse);
-		}
-		
-		UserResponse response = new UserResponse(user.getId(), user.getName(), user.getEmail(), user.getAddress(), roleResponseSet);
-		return ResponseEntity.ok(response);
+		return ResponseEntity.ok(userMapper.toResponse(user));
 	}
 }

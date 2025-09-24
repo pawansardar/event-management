@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.eventmgmt.auth_service.dto.request.AuthRequest;
 import com.eventmgmt.auth_service.dto.request.RegisterUserRequest;
 import com.eventmgmt.auth_service.dto.response.AuthResponse;
-import com.eventmgmt.auth_service.dto.response.RegisterUserResponse;
+import com.eventmgmt.auth_service.dto.response.UserResponse;
+import com.eventmgmt.auth_service.mapper.UserMapper;
 import com.eventmgmt.auth_service.model.User;
 import com.eventmgmt.auth_service.security.JwtUtil;
 import com.eventmgmt.auth_service.service.AuthService;
@@ -21,14 +22,16 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-	private JwtUtil jwtUtil;
-	private UserDetailsService userDetailsService;
-	private AuthService authService;
+	private final JwtUtil jwtUtil;
+	private final UserDetailsService userDetailsService;
+	private final AuthService authService;
+	private final UserMapper userMapper;
 	
-	public AuthController(JwtUtil jwtUtil, UserDetailsService userDetailsService, AuthService authService) {
+	public AuthController(JwtUtil jwtUtil, UserDetailsService userDetailsService, AuthService authService, UserMapper userMapper) {
 		this.jwtUtil = jwtUtil;
 		this.userDetailsService = userDetailsService;
 		this.authService = authService;
+		this.userMapper = userMapper;
 	}
 	
 	@PostMapping("/login")
@@ -46,9 +49,8 @@ public class AuthController {
 	}
 	
 	@PostMapping("/signup")
-	public ResponseEntity<RegisterUserResponse> register(@RequestBody @Valid RegisterUserRequest request) {
+	public ResponseEntity<UserResponse> register(@RequestBody @Valid RegisterUserRequest request) {
 		User registeredUser = authService.signup(request.getName(), request.getEmail(), request.getPassword(), request.getAddress());
-		RegisterUserResponse response = new RegisterUserResponse(registeredUser.getId(), registeredUser.getName(), registeredUser.getEmail(), registeredUser.getAddress());
-		return ResponseEntity.ok(response);
+		return ResponseEntity.ok(userMapper.toResponse(registeredUser));
 	}
 }
