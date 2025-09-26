@@ -18,11 +18,13 @@ import io.jsonwebtoken.security.Keys;
 
 @Component
 public class JwtUtil {
-	@Value("${security.jwt.secret-key}")
-	private String SECRET;
+	private final String SECRET;
+	private final long EXPIRATION;
 	
-	@Value("${security.jwt.expiration-time}")
-	private long EXPIRATION;
+	public JwtUtil (@Value("${security.jwt.secret-key") String secret, @Value("${security.jwt.expiration-time") long expiration) {
+		this.SECRET = secret;
+		this.EXPIRATION = expiration;
+	}
 	
 	// Generate token
 	public String generateToken(String userId, UserDetails userDetails) {
