@@ -21,6 +21,12 @@ public class UpdateUserRequest {
 		this.email = email;
 		this.address = address;
 	}
+	
+	public UpdateUserRequest(String name, String email) {
+		super();
+		this.name = name;
+		this.email = email;
+	}
 
 	public String getName() {
 		return name;
